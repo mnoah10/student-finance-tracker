@@ -4,9 +4,219 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Student Finance Tracker</title>
-        <link rel="stylesheet" href="style/main.css">
+        <link rel="stylesheet" href="styles/main.css">
     </head>
     <body>
+        <a class="skip" href="#main">Skip to content</a>
+        <header>
+            <h1>Finance Tracker</h1>
+            <button id="menu" class="alt" aria-expanded="false" aria-controls="nav">
+            Menu
+            </button>
+            <nav id="nav" aria-label="Main">
+                <a href="#about">About</a>
+                <a href="#dashboard">Dashboard</a>
+                <a href="#records">Records</a>
+                <a href="#form">Add/Edit</a>
+                <a href="#settings">Settings</a>
+            </nav>
+        </header>    
+        <main id="main" tabindex="-1">
+            <p id="status" role="status" class="note"></p>
+            <section id="about" aria-labelledby="h-about">
+                <h2 id="h-about">About</h2>
+
+                <p>
+                    Log what you spend, search it with regular expressions, and stay under your budget cap. Amounts are stored in Rwandan francs (RWF) and can be shown in other currencies.
+                </p>
+                <p>
+                    Contact:
+                    <a href="https://github.com/mnoah10">GitHub</a> or
+                    <a href="mailto:n.muyango@alustudent.com">n.muyango@alustudent.com</a>
+                </p>
+            </section>
+
+            <section id="dashboard" aria-labelledby="h-dash">
+                <h2 id="h-dash">Dashboard</h2>
+
+
+                <dl class="stats">
+                    <div>
+                        <dt>Records</dt>
+                        <dd id="s-total">0</dd>  
+                    </div>
+                    <div>
+                        <dt>Spent</dt>
+                        <dd id="s-sum">0</dd>
+                    </div>
+                    <div>
+                        <dt>Top category</dt>
+                        <dd id="s-top">None</dd>
+                    </div>
+                    <div>
+                        <dt>Cap</dt>
+                        <dd id="s-cap">-</dd>
+                    </div>
+                </dl>
+
+
+
+                <p id="cap-polite" aria-live="polite"></p>
+                <p id="cap-assertive" aria-live="assertive" class="over"></p>
+                
+
+                <h3>Last 7 days</h3>
+                <ol id="bars" class="bars"></ol>
+            </section>
+
+            <section id="records" aria-labelledby="h-rec">
+                <h2 id="h-rec">Records</h2>
+
+                <div class="two">
+                    <div>
+                        <label for="q">Search with regex</label>
+                        <input id="q" type="text" placeholder="(coffee|tea)" autocomplete="off">
+                        <span id="re-err" class="err" role="status"></span>
+                    </div>
+                    <div>
+                        <label for="view-cur">Show amounts in</label>
+                        <select id="view-cur"></select>
+                    </div>
+                </div>
+                
+
+                <label class="inline">
+                        <input id="ci" type="checkbox" checked>
+                        Ignore case
+                </label>
+
+                <label class="mob" for="sort">Sort by</label>
+                <select id="sort" class="mob">
+                    <option value="date:-1">Newest first</option>
+                    <option value="date:1">Oldest first</option>
+                    <option value="description:1">Description A-Z</option>
+                    <option value="description:-1">Description Z-A</option>
+                    <option value="amount:1">Amount low-high</option>
+                    <option value="amount:-1">Amount high-low</option>
+                </select>
+
+                <table>
+                    <caption>Spending records</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" data-key="date">
+                                <button data-sort="date">Date</button>
+                            </th>
+                            <th scope="col" data-key="description">
+                                <button data-sort="description">Description</button>
+                            </th>
+                            <th scope="col" data-key="amount">
+                                <button data-sort="amount">Amount</button>
+                            </th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+
+
+                <p id="empty" hidden>No records match. Clear the search or add a record.</p>
+                
+            </section>
+
+            <section id="form" aria-labelledby="h-form">
+                <h2 id="h-form">Add or edit a record</h2>
+
+                <form id="rec-form" novalidate>
+                    <div class="two">
+                        
+
+                        <div>
+                            <label for="description">Description</label>
+                            <input id="description" aria-describedby="e-description" aria-invalid="false">
+                            <span id="e-description" class="err"></span>
+                        </div>
+                        <div>
+                            <label for="amount">Amount (RWF)</label>
+                            <input id="amount" inputmode="decimal" aria-describedby="e-amount" aria-invalid="false">
+                            <span id="e-amount" class="err"></span>
+                        </div>
+                        <div>
+                            <label for="category">Category</label>
+                            <input id="category" list="cats" aria-describedby="e-category" aria-invalid="false">
+                            <datalist id="cats"></datalist>
+                            <span id="e-category" class="err"></span>
+                        </div>
+                        <div>
+                            <label for="date">Date (YYYY-MM-DD)</label>
+                            <input id="date" placeholder="2025-09-29" aria-describedby="e-date" aria-invalid="false">
+                            <span id="e-date" class="err"></span>
+                        </div>
+                    </div>
+                    <p>
+                        <button type="submit" id="save">Add record</button>
+                        <button type="button" id="cancel" class="alt" hidden>Cancel edit</button>
+                    </p>
+                </form>
+            </section>
+
+            <section id="settings" aria-labelledby="h-set">
+                <h2 id="h-set">Settings</h2>
+                <form id="settings-form" novalidate>
+                    <div class="two">
+                        <div>
+                            <label for="s-base">Base currency</label>
+                            <input id="s-base" maxlength="3">
+                        </div>
+
+                        <div>
+                            <label for="s-cap-in">Spending cap (base currency)</label>
+                            <input id="s-cap-in" inputmode="numeric">
+                        </div>
+                        <div>
+                            <label for="c1-code">Currency 2 code</label>
+                            <input id="c1-code" maxlength="3">
+                        </div>
+
+                        <div>
+                            <label for="c1-rate">1 unit equals how many base?</label>
+                            <input id="c1-rate" inputmode="decimal">
+                        </div>
+
+
+                        <div>
+                            <label for="c2-code">Currency 3 code</label>
+                            <input id="c2-code" maxlength="3">
+                        </div>
+                        <div>
+                            <label for="c2-rate">1 unit equals how many base?</label>
+                            <input id="c2-rate" inputmode="decimal">
+                        </div>
+
+                    </div>
+
+                    <label for="s-cats">Categories (comma separated)</label>
+                    <input id="s-cats">
+                    <span id="s-err" class="err" role="status"></span>
+
+                    <p><button type="submit">Save settings</button></p>
+                </form>
+
+                <h3>Data</h3>
+                <p>
+                    <button id="export" class="alt">Export JSON</button>
+                    <label class="filebtn" for="import">Import JSON</label>
+                    <input id="import" type="file" accept="application/json" class="sr">
+                </p>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>Student Finance Tracker. Data stays in your browser.</p>
+        </footer>
+
         <script type="module" src="scripts/main.js"></script>
     </body>
 </html>
