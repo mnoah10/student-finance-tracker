@@ -249,6 +249,10 @@ td::before {
     font-weight: 700;
 }
 
+td button + button {
+    margin-left: var(--s);
+}
+
 th button {
     background: none;
     color: inherit;
@@ -293,6 +297,10 @@ th button {
 
     td::before{
         content: none;
+    }
+
+    td button + button {
+        margin-left: var(--s);
     }
 }
 
